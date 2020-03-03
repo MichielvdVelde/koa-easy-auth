@@ -1,0 +1,26 @@
+{
+  "name": "koa-easy-auth",
+  "version": "0.0.1",
+  "description": "Easy and simple authentication for Koa",
+  "main": "./dist/index.js",
+  "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=13"
+  },
+  "keywords": [
+    "koa",
+    "auth",
+    "authentication",
+    "authorization"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/koa": "^2.11.2"
+  },
+  "peerDependencies": {
+    "koa": "^2.11.0"
+  }
+}
