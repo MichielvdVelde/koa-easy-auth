@@ -33,7 +33,6 @@ export default class Authentication<T extends { [key: string]: any }> {
       if (!authHeader || !authHeader.includes(' ')) {
         // Missing or invalid authorization header
         ctx.status = 401
-        ctx.body = 'Missing or invalid authorization header'
         return
       }
 
@@ -42,7 +41,6 @@ export default class Authentication<T extends { [key: string]: any }> {
       if (!types.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
-        ctx.body = `Unsupported authorization type (${authType})`
         return
       }
 
@@ -54,7 +52,6 @@ export default class Authentication<T extends { [key: string]: any }> {
         result = await strategy(ctx.req)
       } catch (e) {
         ctx.status = e.status || 401
-        ctx.body = e.message || 'Strategy failed'
         return
       }
 
