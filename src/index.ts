@@ -8,7 +8,13 @@ export interface Strategy<T> {
 }
 
 export default class Authentication<T extends { [key: string]: any }> {
+  public readonly realm: string
+
   protected strategies: Map<string, Strategy<T>> = new Map()
+
+  public constructor (realm: string) {
+    this.realm = realm
+  }
 
   public use (type: string, strategy: Strategy<T>) {
     this.strategies.set(type.toLowerCase(), strategy)
@@ -33,6 +39,7 @@ export default class Authentication<T extends { [key: string]: any }> {
       if (!authHeader || !authHeader.includes(' ')) {
         // Missing or invalid authorization header
         ctx.status = 401
+        ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
         return
       }
 
@@ -41,6 +48,7 @@ export default class Authentication<T extends { [key: string]: any }> {
       if (!types.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
+        ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
         return
       }
 
@@ -52,6 +60,11 @@ export default class Authentication<T extends { [key: string]: any }> {
         result = await strategy(ctx.req)
       } catch (e) {
         ctx.status = e.status || 401
+
+        if (ctx.status === 401) {
+          ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
+        }
+
         return
       }
 
