@@ -37,7 +37,7 @@ auth.use('Basic', async req => {
   // usually we'd do some checking here to see
   // if the supplied user name and password are correct
   
-  // credentials object is merged into ctx.state
+  // the returned object is merged into ctx.state
   // NOTE: in actual code you may not want to expose the password!
   return {
     credentials
@@ -51,7 +51,7 @@ app.use(async ctx => {
   const { state } = ctx
   const { credentials } = state
   
-  console.log(`Hello, I am ${credenials.user}`)
+  console.log(`Hello, I am ${credenials.name}`)
 })
 
 app.listen(3000)
