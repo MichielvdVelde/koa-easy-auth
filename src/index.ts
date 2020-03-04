@@ -36,6 +36,7 @@ export default class Authentication {
     })
 
     const typesLowerCase = types.map(type => type.toLowerCase())
+    const authenticationHeaders = this.buildAuthenticateHeaders(types)
 
     return async (ctx, next) => {
       const authHeader = ctx.req.headers.authorization
@@ -43,7 +44,7 @@ export default class Authentication {
       if (!authHeader || !authHeader.includes(' ')) {
         // Missing or invalid authorization header
         ctx.status = 401
-        ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
+        ctx.set('WWW-Authenticate', authenticationHeaders)
         return
       }
 
@@ -52,7 +53,7 @@ export default class Authentication {
       if (!typesLowerCase.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
-        ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
+        ctx.set('WWW-Authenticate', authenticationHeaders)
         return
       }
 
@@ -68,7 +69,7 @@ export default class Authentication {
         }
 
         if (ctx.status === 401) {
-          ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
+          ctx.set('WWW-Authenticate', authenticationHeaders)
         }
 
         return
