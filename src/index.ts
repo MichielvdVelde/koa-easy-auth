@@ -7,17 +7,26 @@ export interface Strategy<T> {
   (req: IncomingMessage): Promise<T>
 }
 
+export interface StrategyDescriptor<T> {
+  strategy: Strategy<T>,
+  params: { [key: string]: string | number }
+}
+
 export default class Authentication<T extends { [key: string]: any }> {
   public readonly realm: string
 
-  protected strategies: Map<string, Strategy<T>> = new Map()
+  protected strategies: Map<string, StrategyDescriptor<T>> = new Map()
 
   public constructor (realm: string) {
     this.realm = realm
   }
 
-  public use (type: string, strategy: Strategy<T>) {
-    this.strategies.set(type.toLowerCase(), strategy)
+  public use (
+    type: string,
+    strategy: Strategy<T>,
+    params: { [key: string]: string | number } = {}
+  ) {
+    this.strategies.set(type.toLowerCase(), { strategy, params })
   }
 
   public middleware (...types: string[]): Middleware {
@@ -52,7 +61,7 @@ export default class Authentication<T extends { [key: string]: any }> {
         return
       }
 
-      const strategy = this.strategies.get(authType)
+      const { strategy } = this.strategies.get(authType)
 
       let result: T
 
