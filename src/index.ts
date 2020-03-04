@@ -37,31 +37,13 @@ export default class Authentication {
 
     const typesLowerCase = types.map(type => type.toLowerCase())
 
-    // builds a WWW-Authenticate entry for each
-    // supported authorization type
-    const buildAuthenticate = () => {
-      const headers: string[] = []
-
-      for (const type of types) {
-        const { params } = this.strategies.get(type.toLowerCase())
-
-        if (Object.keys(params).length) {
-          headers.push(`${type} ${paramsToString(params)}`)
-        } else {
-          headers.push(type)
-        }
-      }
-
-      return headers
-    }
-
     return async (ctx, next) => {
       const authHeader = ctx.req.headers.authorization
 
       if (!authHeader || !authHeader.includes(' ')) {
         // Missing or invalid authorization header
         ctx.status = 401
-        ctx.set('WWW-Authenticate', buildAuthenticate())
+        ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
         return
       }
 
@@ -70,7 +52,7 @@ export default class Authentication {
       if (!typesLowerCase.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
-        ctx.set('WWW-Authenticate', buildAuthenticate())
+        ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
         return
       }
 
@@ -86,7 +68,7 @@ export default class Authentication {
         }
 
         if (ctx.status === 401) {
-          ctx.set('WWW-Authenticate', buildAuthenticate())
+          ctx.set('WWW-Authenticate', this.buildAuthenticateHeaders(types))
         }
 
         return
@@ -96,5 +78,21 @@ export default class Authentication {
 
       return next()
     }
+  }
+
+  protected buildAuthenticateHeaders (types: string[]) {
+    const headers: string[] = []
+
+    for (const type of types) {
+      const { params } = this.strategies.get(type.toLowerCase())
+
+      if (Object.keys(params).length) {
+        headers.push(`${type} ${paramsToString(params)}`)
+      } else {
+        headers.push(type)
+      }
+    }
+
+    return headers
   }
 }
