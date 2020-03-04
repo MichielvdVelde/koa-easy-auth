@@ -40,7 +40,7 @@ export default class Authentication<T extends { [key: string]: any }> {
       }
     })
 
-    types = types.map(type => type.toLowerCase())
+    const typesLowerCase = types.map(type => type.toLowerCase())
 
     return async (ctx, next) => {
       const authHeader = ctx.req.headers.authorization
@@ -54,7 +54,7 @@ export default class Authentication<T extends { [key: string]: any }> {
 
       const authType = authHeader.split(' ')[0].toLowerCase()
 
-      if (!types.includes(authType)) {
+      if (!typesLowerCase.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
         ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
