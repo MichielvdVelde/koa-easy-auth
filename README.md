@@ -44,7 +44,8 @@ auth.use('Basic', async req => {
   return {
     credentials
   }
-})
+  // optional strategy parameters, are exposed in the WWW-Authenticate header
+}, { realm: 'my-realm', charset: 'UTF-8' })
 
 // add the middleware for the `Basic` strategy only
 app.use(auth.middleware('Basic'))

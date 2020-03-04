@@ -3,6 +3,8 @@
 import { IncomingMessage } from 'http'
 import { Middleware } from 'koa'
 
+import { paramsToString } from './util'
+
 export interface Strategy<T> {
   (req: IncomingMessage): Promise<T>
 }
@@ -42,13 +44,31 @@ export default class Authentication<T extends { [key: string]: any }> {
 
     const typesLowerCase = types.map(type => type.toLowerCase())
 
+    // builds a WWW-Authenticate entry for each
+    // supported authorization type
+    const buildAuthenticate = () => {
+      const headers: string[] = []
+
+      for (const type of types) {
+        const { params } = this.strategies.get(type.toLowerCase())
+
+        if (Object.keys(params).length) {
+          headers.push(`${type} ${paramsToString(params)}`)
+        } else {
+          headers.push(type)
+        }
+      }
+
+      return headers
+    }
+
     return async (ctx, next) => {
       const authHeader = ctx.req.headers.authorization
 
       if (!authHeader || !authHeader.includes(' ')) {
         // Missing or invalid authorization header
         ctx.status = 401
-        ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
+        ctx.set('WWW-Authenticate', buildAuthenticate())
         return
       }
 
@@ -57,7 +77,7 @@ export default class Authentication<T extends { [key: string]: any }> {
       if (!typesLowerCase.includes(authType)) {
         // Unsupported authorization type
         ctx.status = 401
-        ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
+        ctx.set('WWW-Authenticate', buildAuthenticate())
         return
       }
 
@@ -71,7 +91,7 @@ export default class Authentication<T extends { [key: string]: any }> {
         ctx.status = e.status || 401
 
         if (ctx.status === 401) {
-          ctx.set('WWW-Authenticate', `realm="${this.realm}", charset="UTF-8"`)
+          ctx.set('WWW-Authenticate', buildAuthenticate())
         }
 
         return
