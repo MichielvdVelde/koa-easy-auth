@@ -25,7 +25,7 @@ import Koa from 'koa'
 import Authentication from 'koa-simple-auth'
 import createError from 'http-errors'
 
-import basicAuth, { BasicAuthResult } from 'basic-auth'
+import basicAuth from 'basic-auth'
 
 const app = new Koa()
 const auth = new Authentication()
@@ -50,7 +50,7 @@ auth.use('Basic', async ctx => {
 
 // Add a second strategy
 auth.use('Token', async ctx => {
-  const token = ctx.req.headers.authorization.splir(' ')[1]
+  const token = ctx.req.headers.authorization.split(' ')[1]
   
   if (token !== 'token') {
     throw createError(401, 'Invalid token')
