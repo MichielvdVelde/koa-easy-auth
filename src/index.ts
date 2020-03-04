@@ -15,13 +15,7 @@ export interface StrategyDescriptor<T> {
 }
 
 export default class Authentication<T extends { [key: string]: any }> {
-  public readonly realm: string
-
   protected strategies: Map<string, StrategyDescriptor<T>> = new Map()
-
-  public constructor (realm: string) {
-    this.realm = realm
-  }
 
   public use (
     type: string,

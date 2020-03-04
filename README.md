@@ -28,7 +28,7 @@ import Authentication from 'koa-simple-auth'
 import basicAuth, { BasicAuthResult } from 'basic-auth'
 
 const app = new Koa()
-const auth = new Authentication<{ credentials: BasicAuthResult }>('my-realm')
+const auth = new Authentication<{ credentials: BasicAuthResult }>
 
 // Add a strategy for the `Basic` authorization type
 // NOTE: strategies are NOT middleware, a new strategy for the same type
