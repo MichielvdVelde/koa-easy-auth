@@ -1,6 +1,10 @@
 'use strict'
 
 export function paramsToString (params: { [key: string]: string | number } = {}) {
-  // TODO: escape params[key]
-  return Object.keys(params).map(key => `${key}="${params[key]}"`).join(', ')
+  return Object.keys(params).map(key => {
+    // escape double quotes - https://gist.github.com/getify/3667624
+    const escaped = `${params[key]}`.replace(/\\([\s\S])|(")/g,"\\$1$2")
+
+    return `${key}="${escaped}"`
+  }).join(', ')
 }
