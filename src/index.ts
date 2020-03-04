@@ -4,21 +4,21 @@ import { Middleware, ParameterizedContext } from 'koa'
 
 import { paramsToString } from './util'
 
-export interface Strategy<T> {
-  (ctx: ParameterizedContext): Promise<T>
+export interface Strategy {
+  (ctx: ParameterizedContext): Promise<void>
 }
 
-export interface StrategyDescriptor<T> {
-  strategy: Strategy<T>,
+export interface StrategyDescriptor {
+  strategy: Strategy,
   params: { [key: string]: string | number }
 }
 
-export default class Authentication<T extends { [key: string]: any }> {
-  protected strategies: Map<string, StrategyDescriptor<T>> = new Map()
+export default class Authentication {
+  protected strategies: Map<string, StrategyDescriptor> = new Map()
 
   public use (
     type: string,
-    strategy: Strategy<T>,
+    strategy: Strategy,
     params: { [key: string]: string | number } = {}
   ) {
     this.strategies.set(type.toLowerCase(), { strategy, params })
@@ -76,10 +76,8 @@ export default class Authentication<T extends { [key: string]: any }> {
 
       const { strategy } = this.strategies.get(authType)
 
-      let result: T
-
       try {
-        result = await strategy(ctx)
+        await strategy(ctx)
       } catch (e) {
         ctx.status = e.status || 401
 
@@ -94,11 +92,7 @@ export default class Authentication<T extends { [key: string]: any }> {
         return
       }
 
-      ctx.state = {
-        ...ctx.state,
-        ...result,
-        authenticated: true
-      }
+      ctx.state.authenticated = true
 
       return next()
     }
