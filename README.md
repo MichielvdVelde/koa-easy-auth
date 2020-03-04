@@ -31,6 +31,8 @@ const app = new Koa()
 const auth = new Authentication<{ credentials: BasicAuthResult }>('my-realm')
 
 // Add a strategy for the `Basic` authorization type
+// NOTE: strategies are NOT middleware, a new strategy for the same type
+// will REPLACE the old strategy!
 auth.use('Basic', async req => {
   const credentials = basicAuth(req)
   
