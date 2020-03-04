@@ -1,12 +1,11 @@
 'use strict'
 
-import { IncomingMessage, STATUS_CODES } from 'http'
-import { Middleware } from 'koa'
+import { Middleware, ParameterizedContext } from 'koa'
 
 import { paramsToString } from './util'
 
 export interface Strategy<T> {
-  (req: IncomingMessage): Promise<T>
+  (ctx: ParameterizedContext): Promise<T>
 }
 
 export interface StrategyDescriptor<T> {
@@ -80,7 +79,7 @@ export default class Authentication<T extends { [key: string]: any }> {
       let result: T
 
       try {
-        result = await strategy(ctx.req)
+        result = await strategy(ctx)
       } catch (e) {
         ctx.status = e.status || 401
 
