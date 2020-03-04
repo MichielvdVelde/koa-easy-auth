@@ -1,6 +1,6 @@
 'use strict'
 
-import { IncomingMessage } from 'http'
+import { IncomingMessage, STATUS_CODES } from 'http'
 import { Middleware } from 'koa'
 
 import { paramsToString } from './util'
@@ -83,6 +83,10 @@ export default class Authentication<T extends { [key: string]: any }> {
         result = await strategy(ctx.req)
       } catch (e) {
         ctx.status = e.status || 401
+
+        if (e.expose && e.message) {
+          ctx.body = e.message
+        }
 
         if (ctx.status === 401) {
           ctx.set('WWW-Authenticate', buildAuthenticate())
