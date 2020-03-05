@@ -4,6 +4,10 @@
   "description": "Easy and simple authentication for Koa",
   "main": "./dist/index.js",
   "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichielvdVelde/koa-easy-auth.git"
+  },
   "files": [
     "dist"
   ],
