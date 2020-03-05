@@ -65,9 +65,9 @@ app.use(auth.middleware('Basic'))
 
 app.use(async ctx => {
   const { state } = ctx
-  const { name } = state
+  const { user } = state
   
-  console.log(`Hello, you are ${name}!`)
+  ctx.body = `Hello, you are ${user}!`
 })
 
 app.listen(3000)
