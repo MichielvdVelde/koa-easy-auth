@@ -1,6 +1,6 @@
 {
   "name": "koa-easy-auth",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Easy and simple authentication for Koa",
   "main": "./dist/index.js",
   "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
