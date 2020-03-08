@@ -31,8 +31,13 @@ import createError from 'http-errors'
 
 import basicAuth from 'basic-auth'
 
+// optional state interface/type
+interface State {
+  user: string
+}
+
 const app = new Koa()
-const auth = new Authentication()
+const auth = new Authentication<State>()
 
 // Add a strategy for the `Basic` authorization type
 // NOTE: strategies are NOT middleware, a new strategy for the same type

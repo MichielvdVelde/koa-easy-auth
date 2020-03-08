@@ -1,30 +1,30 @@
 'use strict'
 
-import { Middleware, ParameterizedContext } from 'koa'
+import { Middleware, ParameterizedContext, DefaultState } from 'koa'
 
 import { paramsToString } from './util'
 
-export interface Strategy {
-  (ctx: ParameterizedContext): Promise<void>
+export interface Strategy<StateT = DefaultState> {
+  (ctx: ParameterizedContext<StateT>): Promise<void>
 }
 
-export interface StrategyDescriptor {
-  strategy: Strategy,
+export interface StrategyDescriptor<StateT = DefaultState> {
+  strategy: Strategy<StateT>,
   params: { [key: string]: string | number }
 }
 
-export default class Authentication {
-  protected strategies: Map<string, StrategyDescriptor> = new Map()
+export default class Authentication<StateT = DefaultState> {
+  protected strategies: Map<string, StrategyDescriptor<StateT>> = new Map()
 
   public use (
     type: string,
-    strategy: Strategy,
+    strategy: Strategy<StateT>,
     params: { [key: string]: string | number } = {}
   ) {
     this.strategies.set(type.toLowerCase(), { strategy, params })
   }
 
-  public middleware (...types: string[]): Middleware {
+  public middleware (...types: string[]): Middleware<StateT> {
     if (types.length === 0) {
       throw new TypeError('middleware() expects at least one type')
     }
@@ -75,7 +75,7 @@ export default class Authentication {
         return
       }
 
-      ctx.state.authenticated = true
+      (ctx.state as any).authenticated = true
 
       return next()
     }
