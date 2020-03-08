@@ -8,7 +8,7 @@ Easy and simple authentication for [Koa](https://github.com/koajs/koa).
 Extracted from a personal project in which I required simple, no-nonsense
 authentication with support for multiple authorization types.
 
-Koa is marked as a peer dependency; you'll need to install Koa yourself.
+[Koa](https://koajs.com/) is marked as a peer dependency; you'll need to install Koa yourself.
 
 ## Install
 
